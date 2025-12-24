@@ -12,8 +12,6 @@ import { assertTicketRegionGoldenSuiteOrThrow } from '@/utils/goldenTicketRegion
 import { useAuth } from '@/hooks/useAuth';
 import { BACKEND_URL } from '@/lib/backendUrl';
 
-const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:4000';
-
 type TicketRegion = {
   x: number;
   y: number;
@@ -73,7 +71,7 @@ export const TicketEditor: React.FC<TicketEditorProps> = ({ pdfUrl, fileType = '
     let cancelled = false;
     const run = async () => {
       try {
-        const res = await fetch(`${API_BASE}/api/docs/${documentId}/raw-svg`, {
+        const res = await fetch(`${BACKEND_URL}/api/docs/${documentId}/raw-svg`, {
           headers: {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },

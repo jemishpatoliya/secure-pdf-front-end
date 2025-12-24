@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Navbar from '@/components/Navbar';
 import { Input } from '@/components/ui/input';
+import { BACKEND_URL } from '@/lib/backendUrl';
 
 const Upload = () => {
   const navigate = useNavigate();
@@ -87,7 +88,7 @@ const Upload = () => {
       formData.append('title', selectedFile.name);
       formData.append('totalPrints', '5');
 
-      const res = await fetch('http://localhost:4000/api/docs/upload', {
+      const res = await fetch(`${BACKEND_URL}/api/docs/upload`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -172,14 +173,11 @@ const Upload = () => {
 
     try {
       const params = new URLSearchParams({ email: searchEmail.trim() });
-      const usersRes = await fetch(
-        `http://localhost:4000/api/admin/users?${params.toString()}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const usersRes = await fetch(`${BACKEND_URL}/api/admin/users?${params.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const usersData = await usersRes.json().catch(() => ({}));
 
       if (usersRes.status === 401 && (usersData as any).logout) {
@@ -207,15 +205,12 @@ const Upload = () => {
       const userId = target._id;
       setSelectedAdminTarget({ id: userId, email: target.email });
 
-      const res = await fetch(
-        `http://localhost:4000/api/admin/users/${userId}/sessions`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await fetch(`${BACKEND_URL}/api/admin/users/${userId}/sessions`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const data = await res.json().catch(() => ({}));
 
@@ -255,7 +250,7 @@ const Upload = () => {
     setIsLoggingOutAll(true);
 
     try {
-      const res = await fetch('http://localhost:4000/api/admin/logout-all', {
+      const res = await fetch(`${BACKEND_URL}/api/admin/logout-all`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -298,7 +293,7 @@ const Upload = () => {
     setIsLoadingUsers(true);
 
     try {
-      const res = await fetch('http://localhost:4000/api/admin/users/active-sessions', {
+      const res = await fetch(`${BACKEND_URL}/api/admin/users/active-sessions`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -342,14 +337,11 @@ const Upload = () => {
     setIsLoadingIpOverview(true);
 
     try {
-      const res = await fetch(
-        `http://localhost:4000/api/admin/users/${selectedAdminTarget.id}/ip-overview`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await fetch(`${BACKEND_URL}/api/admin/users/${selectedAdminTarget.id}/ip-overview`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const data = await res.json().catch(() => ({}));
 
@@ -384,7 +376,7 @@ const Upload = () => {
     setIsLoadingBlockedIps(true);
 
     try {
-      const res = await fetch('http://localhost:4000/api/admin/blocked-ips', {
+      const res = await fetch(`${BACKEND_URL}/api/admin/blocked-ips`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -426,17 +418,14 @@ const Upload = () => {
     }
 
     try {
-      const res = await fetch(
-        `http://localhost:4000/api/admin/users/${selectedAdminTarget.id}/block-other-ips`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ reason: 'Block all other IPs from admin panel' }),
-        }
-      );
+      const res = await fetch(`${BACKEND_URL}/api/admin/users/${selectedAdminTarget.id}/block-other-ips`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ reason: 'Block all other IPs from admin panel' }),
+      });
 
       const data = await res.json().catch(() => ({}));
 
@@ -481,7 +470,7 @@ const Upload = () => {
 
     try {
       for (const id of selectedUserIds) {
-        const res = await fetch('http://localhost:4000/api/admin/logout-all', {
+        const res = await fetch(`${BACKEND_URL}/api/admin/logout-all`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -751,7 +740,7 @@ const Upload = () => {
                             onClick={async () => {
                               if (!token) return;
                               try {
-                                const res = await fetch(`http://localhost:4000/api/admin/sessions/${s._id}/logout`, {
+                                const res = await fetch(`${BACKEND_URL}/api/admin/sessions/${s._id}/logout`, {
                                   method: 'POST',
                                   headers: {
                                     'Content-Type': 'application/json',
@@ -792,7 +781,7 @@ const Upload = () => {
                             onClick={async () => {
                               if (!token) return;
                               try {
-                                const res = await fetch(`http://localhost:4000/api/admin/sessions/${s._id}/block-ip`, {
+                                const res = await fetch(`${BACKEND_URL}/api/admin/sessions/${s._id}/block-ip`, {
                                   method: 'POST',
                                   headers: {
                                     'Content-Type': 'application/json',
@@ -888,8 +877,8 @@ const Upload = () => {
                                     if (!token) return;
                                     try {
                                       const url = row.isBlocked
-                                        ? 'http://localhost:4000/api/admin/unblock-ip'
-                                        : 'http://localhost:4000/api/admin/block-ip';
+                                        ? `${BACKEND_URL}/api/admin/unblock-ip`
+                                        : `${BACKEND_URL}/api/admin/block-ip`;
                                       const res = await fetch(url, {
                                         method: 'POST',
                                         headers: {
@@ -977,17 +966,14 @@ const Upload = () => {
                               onClick={async () => {
                                 if (!token) return;
                                 try {
-                                  const res = await fetch(
-                                    'http://localhost:4000/api/admin/unblock-ip',
-                                    {
-                                      method: 'POST',
-                                      headers: {
-                                        'Content-Type': 'application/json',
-                                        Authorization: `Bearer ${token}`,
-                                      },
-                                      body: JSON.stringify({ ip: b.ip }),
-                                    }
-                                  );
+                                  const res = await fetch(`${BACKEND_URL}/api/admin/unblock-ip`, {
+                                    method: 'POST',
+                                    headers: {
+                                      'Content-Type': 'application/json',
+                                      Authorization: `Bearer ${token}`,
+                                    },
+                                    body: JSON.stringify({ ip: b.ip }),
+                                  });
                                   const data = await res.json().catch(() => ({}));
                                   if (!res.ok) {
                                     const msg = (data as any).message || 'Failed to unblock IP';

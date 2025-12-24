@@ -10,10 +10,12 @@ import { Button } from '@/components/ui/button';
 
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
+import { BACKEND_URL } from '@/lib/backendUrl';
 
 const Viewer = () => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
+
   const state = (location.state || {}) as any;
   const sessionToken = state.sessionToken ?? searchParams.get('sessionToken') ?? undefined;
   const documentTitle = state.documentTitle ?? searchParams.get('documentTitle') ?? undefined;
@@ -66,7 +68,7 @@ const Viewer = () => {
     let cancelled = false;
     const run = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/api/docs/${documentId}/raw-svg`, {
+        const res = await fetch(`${BACKEND_URL}/api/docs/${documentId}/raw-svg`, {
           headers: {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
@@ -102,7 +104,7 @@ const Viewer = () => {
         setLoading(true);
         setError(null);
 
-        const res = await fetch('http://localhost:4000/api/docs/secure-render', {
+        const res = await fetch(`${BACKEND_URL}/api/docs/secure-render`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -191,7 +193,7 @@ const Viewer = () => {
     setIsPrinting(true);
     
     try {
-      const res = await fetch('http://localhost:4000/api/docs/secure-print', {
+      const res = await fetch(`${BACKEND_URL}/api/docs/secure-print`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

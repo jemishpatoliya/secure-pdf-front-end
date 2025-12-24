@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { ArrowLeft } from 'lucide-react';
+import { BACKEND_URL } from '@/lib/backendUrl';
 
 const CreateUser = () => {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ const CreateUser = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:4000/api/admin/users', {
+      const response = await fetch(`${BACKEND_URL}/api/admin/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
